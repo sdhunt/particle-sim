@@ -6,7 +6,7 @@ public class MetalParticle extends AbstractParticle {
 
     @Override
     public Type type() {
-        return Particle.Type.METAL;
+        return Type.METAL;
     }
 
     @Override

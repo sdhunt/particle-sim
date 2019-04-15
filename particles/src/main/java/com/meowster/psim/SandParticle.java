@@ -6,7 +6,7 @@ public class SandParticle extends AbstractParticle {
 
     @Override
     public Type type() {
-        return Particle.Type.SAND;
+        return Type.SAND;
     }
 
     @Override

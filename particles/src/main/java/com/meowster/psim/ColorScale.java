@@ -2,24 +2,18 @@ package com.meowster.psim;
 
 import java.awt.*;
 
-public class ColorScale {
+class ColorScale {
 
-    private static final int DEFAULT_GRADATIONS = 5;
+    private Color[] scale;
 
-    private Color scale[];
-
-    ColorScale(Color c0, Color c1) {
-        this(c0, c1, DEFAULT_GRADATIONS);
-    }
-
-    ColorScale(Color c0, Color c1, int gradations) {
+    ColorScale(Color c1, Color c0, int gradations) {
         scale = new Color[gradations];
         for (int i = 0; i < gradations; i++) {
             scale[i] = computeColor(c0, c1, i);
         }
     }
 
-    Color computeColor(Color c0, Color c1, int index) {
+    private Color computeColor(Color c0, Color c1, int index) {
         float r0 = compAsFloat(c0.getRed());
         float g0 = compAsFloat(c0.getGreen());
         float b0 = compAsFloat(c0.getBlue());
@@ -36,11 +30,11 @@ public class ColorScale {
 
     }
 
-    float compAsFloat(int comp) {
+    private float compAsFloat(int comp) {
         return (float) comp / 255.0f;
     }
 
-    float scaledComp(float f0, float f1, int index) {
+    private float scaledComp(float f0, float f1, int index) {
         float delta = (f1 - f0) / (scale.length - 1);
         return f0 + delta * index;
     }

@@ -10,6 +10,7 @@ class ParticleFactory {
         list.add(new MetalParticle());
         list.add(new SandParticle());
         list.add(new WaterParticle());
+        list.add(new PlantParticle());
         return list;
     }
 
@@ -23,6 +24,8 @@ class ParticleFactory {
                 return new SandParticle();
             case WATER:
                 return new WaterParticle();
+            case PLANT:
+                return new PlantParticle();
             default:
                 return null;
         }

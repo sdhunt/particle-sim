@@ -69,6 +69,7 @@ class Grid {
     }
 
     private void doYourThing(Particle p, Cell cell) {
+        p.tick();
         switch (p.type()) {
             case SAND:
 //            case ASH:
@@ -76,7 +77,11 @@ class Grid {
                 break;
 
             case WATER:
-                processWater((WaterParticle) p, cell);
+                processWater(p, cell);
+                break;
+
+            case PLANT:
+                processPlant(p, cell);
                 break;
 
             default:
@@ -115,7 +120,7 @@ class Grid {
 
     }
 
-    private void processWater(WaterParticle wp, Cell cell) {
+    private void processWater(Particle p, Cell cell) {
         Cell cellUnder = gu.below(cell);
         if (cellUnder != null) {
             Particle p2 = at(cellUnder);
@@ -141,19 +146,16 @@ class Grid {
         }
     }
 
-/*
-    void processPlant(PlantParticle pp, Cell cell) {
+    private void processPlant(Particle p, Cell cell) {
         Cell adj = selectAdjacent(cell);
         if (adj != null) {
-            Particle p = at(adj);
+            Particle padj = at(adj);
             // plant will propagate through water
-            if (p.type() == Particle.Type.WATER) {
-                Particle plant = duplicate(pp);
-                set(adj, plant);
+            if (padj.type() == Particle.Type.WATER) {
+                set(adj, duplicate(p));
             }
         }
     }
-*/
 
 /*
     void processFire(FireParticle fp, Cell cell) {

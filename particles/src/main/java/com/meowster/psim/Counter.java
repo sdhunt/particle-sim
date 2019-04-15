@@ -10,9 +10,22 @@ class Counter {
         count = max;
     }
 
-    int count() {
-        count = count == 0 ? max : count - 1;
+    int value() {
         return count;
+    }
+
+    boolean count() {
+        boolean rollover = false;
+        count--;
+        if (count < 0) {
+            count = max;
+            rollover = true;
+        }
+        return rollover;
+    }
+
+    boolean atMax() {
+        return count == max;
     }
 
     boolean atZero() {
