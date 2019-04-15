@@ -79,6 +79,10 @@ class Grid {
                 processPlant(p, cell);
                 break;
 
+            case FIRE:
+                processFire(p, cell);
+                break;
+
             default:
                 // ignore other particle types
                 break;
@@ -115,19 +119,19 @@ class Grid {
         }
 
         // didn't go directly under - check for diag-left/right
-        Cell cellDiag;
-        Cell cellSide;
+        Cell diag;
+        Cell side;
         if (gu.coinToss()) {
-            cellDiag = gu.leftBelow(cell);
-            cellSide = gu.left(cell);
+            diag = gu.leftBelow(cell);
+            side = gu.left(cell);
         } else {
-            cellDiag = gu.rightBelow(cell);
-            cellSide = gu.right(cell);
+            diag = gu.rightBelow(cell);
+            side = gu.right(cell);
         }
 
-        if (cellSide != null && cellDiag != null) {
-            if (at(cellSide).isDisplaceable() && at(cellDiag).isDisplaceable()) {
-                swap(cell, cellDiag);
+        if (side != null && diag != null) {
+            if (at(side).isDisplaceable() && at(diag).isDisplaceable()) {
+                swap(cell, diag);
             }
         }
     }
@@ -138,10 +142,10 @@ class Grid {
         }
 
         // didn't swap with underneath: try left/right
-        Cell cellSide = gu.coinToss() ? gu.left(cell) : gu.right(cell);
+        Cell side = gu.coinToss() ? gu.left(cell) : gu.right(cell);
 
-        if (cellSide != null && at(cellSide).isEmpty()) {
-            swap(cell, cellSide);
+        if (side != null && at(side).isEmpty()) {
+            swap(cell, side);
         }
     }
 
@@ -155,26 +159,22 @@ class Grid {
         }
     }
 
-/*
-    void processFire(FireParticle fp, Cell cell) {
-        if (fp.hasExpired()) {
-            set(cell, make(Particle.Type.EMPTY));
+    private void processFire(Particle p, Cell cell) {
+        if (p.hasExpired()) {
+            set(cell, createParticle(Particle.Type.EMPTY));
             return;
         }
 
-        Cell adj = selectAdjacent(cell);
+        Cell adj = gu.selectAdjacent(cell);
         if (adj != null) {
-            Particle p = at(adj);
-            // fire will burn combustibles
-            if (p.isCombustible()) {
-                Particle spark = duplicate(fp);
+            if (at(adj).isCombustible()) {
+                Particle spark = duplicateParticle(p);
                 set(adj, spark);
             } else {
-                p.ignite();
+                at(adj).ignite();
             }
         }
     }
-*/
 
 /*
     void processWood(WoodParticle wp, Cell cell) {

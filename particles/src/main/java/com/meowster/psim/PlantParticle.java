@@ -25,4 +25,8 @@ public class PlantParticle extends ColorAgingParticle {
         return 0.05;
     }
 
+    @Override
+    public boolean isCombustible() {
+        return !clockAtStart();
+    }
 }

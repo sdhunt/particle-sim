@@ -29,4 +29,11 @@ public abstract class ColorAgingParticle extends AbstractParticle {
         return currentColor;
     }
 
+    boolean clockAtStart() {
+        return clock.atStart();
+    }
+
+    boolean clockAtZero() {
+        return clock.atZero();
+    }
 }

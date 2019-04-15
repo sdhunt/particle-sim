@@ -8,8 +8,6 @@ class Parameters {
     static final Color CANVAS_BG_COLOR = new Color(0.2f, 0.2f, 0.5f);
 
 
-    static final Color FIRE_COLOR = new Color(0.9f, 0.5f, 0.3f);
-    static final Color FIRE_EMBER_COLOR = new Color(0.6f, 0.3f, 0.3f);
     static final Color WOOD_COLOR = new Color(0.6f, 0.4f, 0.2f);
     static final Color ASH_COLOR = new Color(0.9f, 0.9f, 0.95f);
 

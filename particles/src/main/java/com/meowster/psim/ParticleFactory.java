@@ -15,6 +15,7 @@ class ParticleFactory {
         list.add(new SandParticle());
         list.add(new WaterParticle());
         list.add(new PlantParticle());
+        list.add(new FireParticle());
         return list;
     }
 
@@ -33,6 +34,8 @@ class ParticleFactory {
                 return new WaterParticle();
             case PLANT:
                 return new PlantParticle();
+            case FIRE:
+                return new FireParticle();
             default:
                 return null;
         }
