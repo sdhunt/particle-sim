@@ -1,7 +1,5 @@
 package com.meowster.psim;
 
-import java.util.Random;
-
 import static com.meowster.psim.ParticleFactory.createParticle;
 import static com.meowster.psim.ParticleFactory.duplicateParticle;
 
@@ -9,7 +7,6 @@ class Grid {
     private final int rows;
     private final int cols;
     private final Particle[][] gridContents;
-    private final Random random = new Random();
     private final GridUtils gu;
 
     Grid(int rows, int cols) {
@@ -32,8 +29,7 @@ class Grid {
         Particle current = at(cell);
         if (current.type() != tool) {
             if (tool == Particle.Type.EMPTY || current.isReplaceable()) {
-                Particle p = createParticle(tool);
-                set(cell, p);
+                set(cell, createParticle(tool));
             }
         }
     }
@@ -66,7 +62,6 @@ class Grid {
             doYourThing(p, cell);
         }
     }
-
 
     private void doYourThing(Particle p, Cell cell) {
         p.tick();

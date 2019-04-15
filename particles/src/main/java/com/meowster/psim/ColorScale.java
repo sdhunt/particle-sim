@@ -1,9 +1,10 @@
 package com.meowster.psim;
 
 import java.awt.*;
+import java.util.Random;
 
 class ColorScale {
-
+    private static final Random random = new Random();
     private Color[] scale;
 
     ColorScale(Color c1, Color c0, int gradations) {
@@ -41,5 +42,11 @@ class ColorScale {
 
     Color get(int index) {
         return scale[index];
+    }
+
+    Color fromTop(int n) {
+        int r = random.nextInt(n);
+        int i = scale.length - 1 - r;
+        return scale[i];
     }
 }

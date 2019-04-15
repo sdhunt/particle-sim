@@ -2,10 +2,10 @@ package com.meowster.psim;
 
 import java.awt.*;
 
-import static com.meowster.psim.Parameters.PLANT_COLOR;
-import static com.meowster.psim.Parameters.PLANT_DECAY_COLOR;
-
 public class PlantParticle extends ColorAgingParticle {
+    private static final Color PLANT_COLOR = new Color(0.5f, 0.9f, 0.6f);
+    private static final Color PLANT_DECAY_COLOR = new Color(0.3f, 0.5f, 0.2f);
+
     PlantParticle() {
         super(PLANT_COLOR, PLANT_DECAY_COLOR, 12, 100);
     }

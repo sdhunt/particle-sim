@@ -4,15 +4,15 @@ import java.awt.Color;
 
 public abstract class ColorAgingParticle extends AbstractParticle {
 
-    private ColorScale colorScale;
+    private final ColorScale colorScale;
+    private final Clock clock;
 
     private Color currentColor;
-    private Clock clock;
 
     ColorAgingParticle(Color c1, Color c0, int nColors, int ageRoll) {
-        this.currentColor = c1;
         colorScale = new ColorScale(c1, c0, nColors);
         clock = new Clock(nColors - 1, ageRoll);
+        this.currentColor = colorScale.fromTop(2);
     }
 
     @Override

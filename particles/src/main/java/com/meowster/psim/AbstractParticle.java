@@ -3,7 +3,7 @@ package com.meowster.psim;
 import java.util.Random;
 
 public abstract class AbstractParticle implements Particle {
-    protected static Random random = new Random();
+    private static Random random = new Random();
 
     @Override
     public double activeness() {
@@ -43,5 +43,8 @@ public abstract class AbstractParticle implements Particle {
         return false;
     }
 
+    int fromRange(int limit) {
+        return random.nextInt(limit);
+    }
 }
 

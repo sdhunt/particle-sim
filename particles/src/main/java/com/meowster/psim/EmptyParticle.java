@@ -3,6 +3,7 @@ package com.meowster.psim;
 import java.awt.*;
 
 public class EmptyParticle extends AbstractParticle {
+    private static final Color EMPTY_COLOR = new Color(0.1f, 0.2f, 0.3f);
 
     @Override
     public Type type() {
@@ -11,7 +12,7 @@ public class EmptyParticle extends AbstractParticle {
 
     @Override
     public Color color() {
-        return Parameters.EMPTY_COLOR;
+        return EMPTY_COLOR;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.meowster.psim;
 import java.awt.*;
 
 public class MetalParticle extends AbstractParticle {
+    private static final Color METAL_COLOR = new Color(0.5f, 0.5f, 0.6f);
 
     @Override
     public Type type() {
@@ -11,7 +12,7 @@ public class MetalParticle extends AbstractParticle {
 
     @Override
     public Color color() {
-        return Parameters.METAL_COLOR;
+        return METAL_COLOR;
     }
 
     @Override
