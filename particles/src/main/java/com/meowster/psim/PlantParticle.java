@@ -3,7 +3,7 @@ package com.meowster.psim;
 import java.awt.*;
 
 public class PlantParticle extends ColorAgingParticle {
-    private static final Color PLANT_COLOR = new Color(0.5f, 0.9f, 0.6f);
+    private static final Color PLANT_COLOR = new Color(0.4f, 0.9f, 0.5f);
     private static final Color PLANT_DECAY_COLOR = new Color(0.3f, 0.5f, 0.2f);
 
     PlantParticle() {
@@ -22,7 +22,7 @@ public class PlantParticle extends ColorAgingParticle {
 
     @Override
     public double activeness() {
-        return 0.05;
+        return 0.1;
     }
 
     @Override

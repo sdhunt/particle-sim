@@ -4,7 +4,7 @@ import java.awt.*;
 
 public interface Particle {
     enum Type {
-        EMPTY, METAL, SAND, WATER, PLANT, FIRE, // WOOD, ASH, VAC, FAIRY
+        EMPTY, METAL, SAND, WATER, PLANT, FIRE, STONE, DIRT, GRASS,
     }
 
     /**

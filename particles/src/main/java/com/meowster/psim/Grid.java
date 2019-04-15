@@ -66,6 +66,18 @@ class Grid {
     private void doYourThing(Particle p, Cell cell) {
         p.tick();
         switch (p.type()) {
+            case STONE:
+                processStone(p, cell);
+                break;
+
+            case DIRT:
+                processDirt(p, cell);
+                break;
+
+            case GRASS:
+                processGrass(p, cell);
+                break;
+
             case SAND:
 //            case ASH:
                 processSandOrAsh(p, cell);
@@ -111,6 +123,36 @@ class Grid {
             }
         }
         return false;
+    }
+
+    private void processStone(Particle p, Cell cell) {
+        displaceDownwards(p, cell);
+    }
+
+    private void processDirt(Particle p, Cell cell) {
+        if (displaceDownwards(p, cell)) {
+            return;
+        }
+        Cell under = gu.below(cell);
+        boolean onDirt = under == null || at(under).type() == Particle.Type.DIRT;
+        Cell topside = gu.above(cell);
+        if (onDirt && topside != null && at(topside).isEmpty()) {
+            set(cell, createParticle(Particle.Type.GRASS));
+        }
+    }
+
+    private void processGrass(Particle p, Cell cell) {
+        // if grass is falling, turn it back into dirt
+        if (displaceDownwards(p, cell)) {
+            set(gu.below(cell), createParticle(Particle.Type.DIRT));
+            return;
+        }
+
+        // if grass is no longer exposed to air
+        Cell topside = gu.above(cell);
+        if (topside != null && !at(topside).isEmpty()) {
+            set(cell, createParticle(Particle.Type.DIRT));
+        }
     }
 
     private void processSandOrAsh(Particle p, Cell cell) {

@@ -16,6 +16,6 @@ class Parameters {
     static final int GRID_CELL_SIZE = 10;
 
     static final int STEPS_PER_LOOP = 20000;
-    static final long MAIN_LOOP_PAUSE_MS = 8;
+    static final long MAIN_LOOP_PAUSE_MS = 12;
 
 }
