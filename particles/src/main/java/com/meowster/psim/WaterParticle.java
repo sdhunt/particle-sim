@@ -2,26 +2,18 @@ package com.meowster.psim;
 
 import java.awt.*;
 
-public class WaterParticle extends AbstractParticle {
+public class WaterParticle extends ColoredParticle {
     private static final Color WATER_COLOR = new Color(0.4f, 0.5f, 0.9f);
-    private static final Color WATER_BRIGHTER = WATER_COLOR.brighter();
+    private static final Color WATER_BRIGHTER = new Color(0.5f, 0.6f, 1.0f);
     private static final int CYCLE_PERIOD = 500;
     private static final ProbDistrib pdistrib =
             new ProbDistrib(2, 10, 20, 50, 60, 60, 60);
-
-    private final ColorScale colorScale;
-    private final Clock clock;
-
-    private Color currentColor;
+    private static final int N_COLORS = pdistrib.size();
+    private static final int N_FIRST = 4;
 
     WaterParticle() {
-        colorScale = new ColorScale(WATER_COLOR, WATER_BRIGHTER, pdistrib.size());
-        currentColor = nextColor();
-        clock = new Clock(1, CYCLE_PERIOD).loop();
-    }
-
-    private Color nextColor() {
-        return colorScale.get(pdistrib.nextIndex());
+        super(WATER_COLOR, WATER_BRIGHTER, N_COLORS, N_FIRST);
+        shimmerOn(CYCLE_PERIOD);
     }
 
     @Override
@@ -30,20 +22,8 @@ public class WaterParticle extends AbstractParticle {
     }
 
     @Override
-    public Color color() {
-        return currentColor;
-    }
-
-    @Override
     public String name() {
         return "Water";
-    }
-
-    @Override
-    public void tick() {
-        if (clock.countdown()) {
-            currentColor = nextColor();
-        }
     }
 
     @Override

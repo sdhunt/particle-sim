@@ -30,4 +30,12 @@ class ProbDistrib {
     int size() {
         return cumulative.length;
     }
+
+    static ProbDistrib equalDistrib(int n) {
+        int[] density = new int[n];
+        for (int i=0; i<n; i++) {
+            density[i] = 1;
+        }
+        return new ProbDistrib(density);
+    }
 }

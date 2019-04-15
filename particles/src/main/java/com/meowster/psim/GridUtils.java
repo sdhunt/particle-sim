@@ -84,4 +84,8 @@ class GridUtils {
     boolean coinToss() {
         return probability(0.5);
     }
+
+    boolean sameType(Particle a, Particle b) {
+        return a.type() == b.type();
+    }
 }

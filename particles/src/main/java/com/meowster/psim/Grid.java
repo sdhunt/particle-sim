@@ -4,6 +4,8 @@ import static com.meowster.psim.ParticleFactory.createParticle;
 import static com.meowster.psim.ParticleFactory.duplicateParticle;
 
 class Grid {
+    private static final double FIRE_SPREAD_PROB = 0.02;
+
     private final int rows;
     private final int cols;
     private final Particle[][] gridContents;
@@ -79,8 +81,12 @@ class Grid {
                 break;
 
             case SAND:
-//            case ASH:
+            case ASH:
                 processSandOrAsh(p, cell);
+                break;
+
+            case WOOD:
+                processWood(p, cell);
                 break;
 
             case WATER:
@@ -148,7 +154,7 @@ class Grid {
             return;
         }
 
-        // if grass is no longer exposed to air
+        // if grass is no longer exposed to air, it's dirt once again
         Cell topside = gu.above(cell);
         if (topside != null && !at(topside).isEmpty()) {
             set(cell, createParticle(Particle.Type.DIRT));
@@ -218,30 +224,35 @@ class Grid {
         }
     }
 
-/*
-    void processWood(WoodParticle wp, Cell cell) {
+    private void processWood(Particle p, Cell cell) {
+        WoodParticle wp = (WoodParticle) p;
         if (wp.hasExpired()) {
-            set(cell, make(Particle.Type.ASH));
+            set(cell, createParticle(Particle.Type.ASH));
             return;
         }
-
         if (!wp.isBurning()) {
             return;
         }
-        wp.burnTick();
 
-        Cell adj = selectAdjacent(cell);
+        wp.burnTick();
+        Cell adj = gu.selectAdjacent(cell);
         if (adj != null) {
-            Particle p = at(adj);
+            Particle p2 = at(adj);
             // burning wood will ignite adjacent wood
-            if (p.type() == Particle.Type.WOOD) {
-                p.ignite();
-            } else if (p.isCombustible() && probability(0.1)) {
-                set(adj, make(Particle.Type.FIRE));
+            if (gu.sameType(p, p2)) {
+                p2.ignite();
+            } else {
+                maybeSetFireTo(p2, adj);
             }
         }
     }
-*/
+
+    private void maybeSetFireTo(Particle p, Cell cell) {
+        if (p.isCombustible() && gu.probability(FIRE_SPREAD_PROB)) {
+            set(cell, createParticle(Particle.Type.FIRE));
+        }
+    }
+
 
 /*
     void processVac(VacParticle vp, Cell cell) {

@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 class GameControls extends JPanel {
-    private static final int CTRL_W = 200;
+    private static final int CTRL_W = 160;
     private static final int CTRL_H = 500;
     private static final Dimension CTRL_DIM = new Dimension(CTRL_W, CTRL_H);
 

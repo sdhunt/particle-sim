@@ -2,38 +2,30 @@ package com.meowster.psim;
 
 import java.awt.Color;
 
-public abstract class ColorAgingParticle extends AbstractParticle {
+public abstract class ColorAgingParticle extends ColoredParticle {
 
-    private final ColorScale colorScale;
-    private final Clock clock;
-
-    private Color currentColor;
+    private final Clock colorClock;
 
     ColorAgingParticle(Color c1, Color c0, int nColors, int ageRoll) {
-        colorScale = new ColorScale(c1, c0, nColors);
-        clock = new Clock(nColors - 1, ageRoll);
-        this.currentColor = colorScale.fromTop(2);
+        super(c1, c0, nColors, 2);
+        colorClock = new Clock(nColors - 1, ageRoll);
     }
 
     @Override
     public void tick() {
-        if (!clock.atZero()) {
-            if (clock.countdown()) {
-                currentColor = colorScale.get(clock.majorValue());
+        super.tick();
+        if (!colorClock.atZero()) {
+            if (colorClock.countdown()) {
+                setColorByIndex(colorClock.majorValue());
             }
         }
     }
 
-    @Override
-    public Color color() {
-        return currentColor;
-    }
-
     boolean clockAtStart() {
-        return clock.atStart();
+        return colorClock.atStart();
     }
 
     boolean clockAtZero() {
-        return clock.atZero();
+        return colorClock.atZero();
     }
 }

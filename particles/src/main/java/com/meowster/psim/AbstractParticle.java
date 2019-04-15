@@ -1,5 +1,6 @@
 package com.meowster.psim;
 
+import java.awt.*;
 import java.util.Random;
 
 public abstract class AbstractParticle implements Particle {
@@ -45,6 +46,14 @@ public abstract class AbstractParticle implements Particle {
 
     int fromRange(int limit) {
         return random.nextInt(limit);
+    }
+
+    Color choice(Color... selection) {
+        return selection[fromRange(selection.length)];
+    }
+
+    void print(String s) {
+        System.out.println(s);
     }
 }
 

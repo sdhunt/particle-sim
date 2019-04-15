@@ -12,9 +12,11 @@ class ParticleFactory {
         List<Particle> list = new ArrayList<>();
         list.add(new EmptyParticle());
         list.add(new MetalParticle());
+        list.add(new WoodParticle());
+//        list.add(new AshParticle());
         list.add(new StoneParticle());
         list.add(new DirtParticle());
-        // list.add(new GrassParticle());
+//        list.add(new GrassParticle());
         list.add(new SandParticle());
         list.add(new WaterParticle());
         list.add(new PlantParticle());
@@ -31,6 +33,10 @@ class ParticleFactory {
                 return new EmptyParticle();
             case METAL:
                 return new MetalParticle();
+            case WOOD:
+                return new WoodParticle();
+            case ASH:
+                return new AshParticle();
             case STONE:
                 return new StoneParticle();
             case DIRT:
