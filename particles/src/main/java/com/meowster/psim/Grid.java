@@ -4,7 +4,7 @@ import java.util.Random;
 
 import static com.meowster.psim.ParticleFactory.createParticle;
 
-public class Grid {
+class Grid {
     private final int numRows;
     private final int numCols;
     private final Particle[][] gridContents;
@@ -28,7 +28,7 @@ public class Grid {
         }
     }
 
-    Particle at(Cell cell) {
+    private Particle at(Cell cell) {
         return at(cell.row(), cell.col());
     }
 
@@ -36,7 +36,7 @@ public class Grid {
         return gridContents[row][col];
     }
 
-    void set(Cell cell, Particle p) {
+    private void set(Cell cell, Particle p) {
         gridContents[cell.row()][cell.col()] = p;
     }
 
@@ -62,13 +62,13 @@ public class Grid {
         }
     }
 
-    Cell pickRandomCell() {
+    private Cell pickRandomCell() {
         int row = random.nextInt(numRows);
         int col = random.nextInt(numCols);
         return new Cell(row, col);
     }
 
-    void doYourThing(Particle p, Cell cell) {
+    private void doYourThing(Particle p, Cell cell) {
         switch (p.type()) {
             case SAND:
 //            case ASH:
@@ -85,7 +85,7 @@ public class Grid {
         }
     }
 
-    void processSandOrAsh(Particle p, Cell cell) {
+    private void processSandOrAsh(Particle p, Cell cell) {
         Cell cellUnder = gu.below(cell);
         if (cellUnder != null) {
             Particle p2 = at(cellUnder);
@@ -115,7 +115,7 @@ public class Grid {
 
     }
 
-    void processWater(WaterParticle wp, Cell cell) {
+    private void processWater(WaterParticle wp, Cell cell) {
         Cell cellUnder = gu.below(cell);
         if (cellUnder != null) {
             Particle p2 = at(cellUnder);
@@ -237,15 +237,15 @@ public class Grid {
         return createParticle(p.type());
     }
 
-    boolean probability(double prob) {
+    private boolean probability(double prob) {
         return random.nextDouble() < prob;
     }
 
-    boolean chooseLeft() {
+    private boolean chooseLeft() {
         return random.nextInt(2) == 0;
     }
 
-    boolean validCell(Cell c) {
+    private boolean validCell(Cell c) {
         return c.row() >= 0 && c.row() < numRows &&
                 c.col() >= 0 && c.col() < numCols;
     }
@@ -271,7 +271,7 @@ public class Grid {
         return validCell(adj) ? adj : null;
     }
 
-    void swap(Cell c1, Cell c2) {
+    private void swap(Cell c1, Cell c2) {
         Particle p1 = at(c1);
         Particle p2 = at(c2);
         set(c1, p2);

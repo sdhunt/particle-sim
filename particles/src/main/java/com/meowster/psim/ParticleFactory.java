@@ -3,8 +3,8 @@ package com.meowster.psim;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParticleFactory {
-    public static List<Particle> createParticleList() {
+class ParticleFactory {
+    static List<Particle> createParticleList() {
         List<Particle> list = new ArrayList<>();
         list.add(new EmptyParticle());
         list.add(new MetalParticle());
@@ -13,7 +13,7 @@ public class ParticleFactory {
         return list;
     }
 
-    public static Particle createParticle(Particle.Type type) {
+    static Particle createParticle(Particle.Type type) {
         switch (type) {
             case EMPTY:
                 return new EmptyParticle();

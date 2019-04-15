@@ -2,7 +2,7 @@ package com.meowster.psim;
 
 import java.awt.*;
 
-public class Parameters {
+class Parameters {
 
     static final Color CONTROLS_BG_COLOR = new Color(0.9f, 0.8f, 0.5f);
     static final Color CANVAS_BG_COLOR = new Color(0.2f, 0.2f, 0.5f);

@@ -22,6 +22,7 @@ class GameControls extends JPanel {
     private static final String BTN_RESET = "RESET";
 
     private final List<Particle> availableParticles;
+    private final Particle emptyParticle;
     private final ButtonListener btnListener = new ButtonListener();
     private final GameCanvas canvas;
     private JLabel toolLabel;
@@ -29,6 +30,7 @@ class GameControls extends JPanel {
     GameControls(GameCanvas canvas) {
         this.canvas = canvas;
         availableParticles = canvas.availableParticles();
+        emptyParticle = findParticleByName("Empty");
 
         setPreferredSize(CTRL_DIM);
         setMinimumSize(CTRL_DIM);
@@ -36,7 +38,7 @@ class GameControls extends JPanel {
         setBackground(Parameters.CONTROLS_BG_COLOR);
     }
 
-    Box createControls() {
+    private Box createControls() {
         Box box = Box.createVerticalBox();
         addResetButton(box);
         for (Particle p: availableParticles) {
@@ -57,12 +59,12 @@ class GameControls extends JPanel {
         box.add(Box.createVerticalStrut(6));
     }
 
-    void addAButton(Box box, Particle p) {
+    private void addAButton(Box box, Particle p) {
         box.add(Box.createVerticalStrut(6));
         box.add(createButton(p));
     }
 
-    JButton createButton(Particle p) {
+    private JButton createButton(Particle p) {
         Icon icon = new ColorIcon(p.color());
         JButton btn = new JButton(p.name(), icon);
         btn.setFont(BTN_FONT);
@@ -74,7 +76,7 @@ class GameControls extends JPanel {
         return btn;
     }
 
-    void addALabel(Box box) {
+    private void addALabel(Box box) {
         Particle p = availableParticles.get(0);
         Color c = p.color();
         ColorIcon icon = new ColorIcon(p.color(), LABEL_SIZE, LABEL_BORDER);
@@ -84,11 +86,11 @@ class GameControls extends JPanel {
         box.add(toolLabel);
     }
 
-    Icon makeLabelIcon(Particle p) {
+    private Icon makeLabelIcon(Particle p) {
         return new ColorIcon(p.color(), LABEL_SIZE, LABEL_BORDER);
     }
 
-    Particle findParticleByName(String name) {
+    private Particle findParticleByName(String name) {
         for (Particle p: availableParticles) {
             if (name.equals(p.name())) {
                 return p;
@@ -100,13 +102,12 @@ class GameControls extends JPanel {
     // inner class
     class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            Particle p;
+            Particle p = emptyParticle;
             String cmd = event.getActionCommand();
 //            System.out.println("Button: " + cmd);
 
             if (BTN_RESET.equals(cmd)) {
                 canvas.reset();
-                p = findParticleByName("Empty");
             } else {
                 p = findParticleByName(cmd);
             }

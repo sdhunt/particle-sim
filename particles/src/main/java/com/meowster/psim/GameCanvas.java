@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.List;
@@ -12,35 +11,31 @@ import java.util.List;
 import static com.meowster.psim.ParticleFactory.createParticleList;
 
 public class GameCanvas extends JPanel {
-    static final Color BG_COLOR = Parameters.CANVAS_BG_COLOR;
+    private static final Color BG_COLOR = Parameters.CANVAS_BG_COLOR;
 
-    static final int CELL_SIZE = Parameters.GRID_CELL_SIZE;
-    static final int ROWS = Parameters.GRID_ROWS;
-    static final int COLS = Parameters.GRID_COLS;
+    private static final int CELL_SIZE = Parameters.GRID_CELL_SIZE;
+    private static final int ROWS = Parameters.GRID_ROWS;
+    private static final int COLS = Parameters.GRID_COLS;
 
-    static final int WIDTH = CELL_SIZE * COLS;
-    static final int HEIGHT = CELL_SIZE * ROWS;
-
-    Executor executor = Executors.newSingleThreadExecutor();
-    MouseHandler mouseHandler = new MouseHandler();
-
-    // where the mouse is (if not null)
-    Cell mouseCell = null;
+    private static final int WIDTH = CELL_SIZE * COLS;
+    private static final int HEIGHT = CELL_SIZE * ROWS;
 
     // what we are currently drawing with the mouse
-    Particle.Type tool = Particle.Type.EMPTY;
+    private Particle.Type tool = Particle.Type.EMPTY;
 
     // our particle grid model
-    Grid grid = new Grid(ROWS, COLS);
+    private Grid grid = new Grid(ROWS, COLS);
 
     GameCanvas() {
         Dimension d = new Dimension(WIDTH, HEIGHT);
         setPreferredSize(d);
         setMinimumSize(d);
 
+        MouseHandler mouseHandler = new MouseHandler();
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
         // create and start the main-loop process in a background thread...
+        Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new MainLoop());
     }
 
@@ -61,12 +56,12 @@ public class GameCanvas extends JPanel {
         paintGrid(g);
     }
 
-    void paintBG(Graphics g) {
+    private void paintBG(Graphics g) {
         g.setColor(BG_COLOR);
         g.fillRect(0, 0, WIDTH, HEIGHT);
     }
 
-    void paintGrid(Graphics g) {
+    private void paintGrid(Graphics g) {
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS; col++) {
                 Particle p = grid.at(row, col);
@@ -75,8 +70,7 @@ public class GameCanvas extends JPanel {
         }
     }
 
-
-    void paintCell(Graphics g, int row, int col, Color color) {
+    private void paintCell(Graphics g, int row, int col, Color color) {
         int x = col * CELL_SIZE;
         int y = row * CELL_SIZE;
         g.setColor(color);
@@ -101,8 +95,7 @@ public class GameCanvas extends JPanel {
         return new Cell(row, col);
     }
 
-    void mouseCellEvent(Cell where) {
-        mouseCell = where;
+    private void mouseCellEvent(Cell where) {
         if (where != null) {
             grid.applyTool(tool, where);
         }

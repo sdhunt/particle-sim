@@ -7,16 +7,16 @@ public class Cell {
     private final int row;
     private final int col;
 
-    public Cell(int row, int col) {
+    Cell(int row, int col) {
         this.row = row;
         this.col = col;
     }
 
-    public int row() {
+    int row() {
         return row;
     }
 
-    public int col() {
+    int col() {
         return col;
     }
 

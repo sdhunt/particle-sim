@@ -1,6 +1,6 @@
 package com.meowster.psim;
 
-public class GridUtils {
+class GridUtils {
     private final int rows;
     private final int cols;
 

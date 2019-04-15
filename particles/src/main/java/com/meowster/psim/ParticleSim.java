@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class ParticleSim extends Display {
 
-    public ParticleSim() {
+    private ParticleSim() {
         super("Particle Simulator", new GamePanel());
     }
 

@@ -3,8 +3,8 @@ package com.meowster.psim;
 import javax.swing.*;
 import java.awt.*;
 
-public class Display extends JFrame {
-    public Display(String title, JPanel panel) {
+class Display extends JFrame {
+    Display(String title, JPanel panel) {
         super(title);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().add(panel);
