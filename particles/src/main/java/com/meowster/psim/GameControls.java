@@ -1,34 +1,30 @@
 package com.meowster.psim;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class GameControls extends JPanel {
-    static final int CTRL_W = 200;
-    static final int CTRL_H = 500;
-    static final Dimension CTRL_DIM = new Dimension(CTRL_W, CTRL_H);
+class GameControls extends JPanel {
+    private static final int CTRL_W = 200;
+    private static final int CTRL_H = 500;
+    private static final Dimension CTRL_DIM = new Dimension(CTRL_W, CTRL_H);
 
-    static final int BTN_W = 100;
-    static final int BTN_H = 40;
-    static final Dimension BTN_DIM = new Dimension(BTN_W, BTN_H);
+    private static final int BTN_W = 90;
+    private static final int BTN_H = 30;
+    private static final Dimension BTN_DIM = new Dimension(BTN_W, BTN_H);
 
-    static final int LABEL_W = 100;
-    static final int LABEL_H = 100;
-    static final Dimension LABEL_DIM = new Dimension(LABEL_W, LABEL_H);
+    private static final int LABEL_SIZE = BTN_W;
+    private static final int LABEL_BORDER = 3;
 
-    static final int LABEL_SIZE = BTN_W;
-    static final int LABEL_BORDER = 3;
+    private static final Font BTN_FONT = new Font("helvetica", Font.PLAIN, 10);
+    private static final String BTN_RESET = "RESET";
 
-    static final Font BTN_FONT = new Font("Monospaced", Font.PLAIN, 14);
-
-    List<Particle> availableParticles;
-    ButtonListener btnListener = new ButtonListener();
-    GameCanvas canvas;
-    JLabel toolLabel;
+    private final List<Particle> availableParticles;
+    private final ButtonListener btnListener = new ButtonListener();
+    private final GameCanvas canvas;
+    private JLabel toolLabel;
 
     GameControls(GameCanvas canvas) {
         this.canvas = canvas;
@@ -42,6 +38,7 @@ public class GameControls extends JPanel {
 
     Box createControls() {
         Box box = Box.createVerticalBox();
+        addResetButton(box);
         for (Particle p: availableParticles) {
             addAButton(box, p);
         }
@@ -49,8 +46,19 @@ public class GameControls extends JPanel {
         return box;
     }
 
+    private void addResetButton(Box box) {
+        JButton reset = new JButton(BTN_RESET);
+        reset.setFont(BTN_FONT);
+        reset.setPreferredSize(BTN_DIM);
+        reset.setMinimumSize(BTN_DIM);
+        reset.setMaximumSize(BTN_DIM);
+        reset.addActionListener(btnListener);
+        box.add(reset);
+        box.add(Box.createVerticalStrut(6));
+    }
+
     void addAButton(Box box, Particle p) {
-        box.add(Box.createVerticalStrut(10));
+        box.add(Box.createVerticalStrut(6));
         box.add(createButton(p));
     }
 
@@ -92,8 +100,16 @@ public class GameControls extends JPanel {
     // inner class
     class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
+            Particle p;
             String cmd = event.getActionCommand();
-            Particle p = findParticleByName(cmd);
+//            System.out.println("Button: " + cmd);
+
+            if (BTN_RESET.equals(cmd)) {
+                canvas.reset();
+                p = findParticleByName("Empty");
+            } else {
+                p = findParticleByName(cmd);
+            }
             toolLabel.setIcon(makeLabelIcon(p));
             canvas.setTool(p.type());
         }

@@ -9,6 +9,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.List;
 
+import static com.meowster.psim.ParticleFactory.createParticleList;
+
 public class GameCanvas extends JPanel {
     static final Color BG_COLOR = Parameters.CANVAS_BG_COLOR;
 
@@ -43,11 +45,15 @@ public class GameCanvas extends JPanel {
     }
 
     List<Particle> availableParticles() {
-        return ParticleFactory.createParticleList();
+        return createParticleList();
     }
 
     void setTool(Particle.Type type) {
         tool = type;
+    }
+
+    void reset() {
+        grid.fillGridWithEmpty();
     }
 
     public void paint(Graphics g) {

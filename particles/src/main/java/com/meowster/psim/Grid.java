@@ -20,7 +20,7 @@ public class Grid {
     }
 
 
-    private void fillGridWithEmpty() {
+    void fillGridWithEmpty() {
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
                 gridContents[row][col] = new EmptyParticle();
