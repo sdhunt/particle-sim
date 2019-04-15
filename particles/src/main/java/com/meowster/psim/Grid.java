@@ -1,25 +1,26 @@
 package com.meowster.psim;
 
-import java.util.List;
 import java.util.Random;
+
+import static com.meowster.psim.ParticleFactory.createParticle;
 
 public class Grid {
     private final int numRows;
     private final int numCols;
     private final Particle[][] gridContents;
-    private final List<Particle> availableParticles;
     private final Random random = new Random();
+    private final GridUtils gu;
 
     Grid(int numRows, int numCols) {
         this.numRows = numRows;
         this.numCols = numCols;
-        availableParticles = ParticleFactory.createParticleList();
+        gu = new GridUtils(numRows, numCols);
         gridContents = new Particle[numRows][numCols];
         fillGridWithEmpty();
     }
 
 
-    void fillGridWithEmpty() {
+    private void fillGridWithEmpty() {
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
                 gridContents[row][col] = new EmptyParticle();
@@ -43,8 +44,10 @@ public class Grid {
     void applyTool(Particle.Type tool, Cell cell) {
         Particle current = at(cell);
         if (current.type() != tool) {
-            Particle p = ParticleFactory.createParticle(tool);
-            set(cell, p);
+            if (tool == Particle.Type.EMPTY || current.isReplaceable()) {
+                Particle p = createParticle(tool);
+                set(cell, p);
+            }
         }
     }
 
@@ -83,7 +86,7 @@ public class Grid {
     }
 
     void processSandOrAsh(Particle p, Cell cell) {
-        Cell cellUnder = below(cell);
+        Cell cellUnder = gu.below(cell);
         if (cellUnder != null) {
             Particle p2 = at(cellUnder);
             if (p2.isDisplaceable()) {
@@ -96,11 +99,11 @@ public class Grid {
         Cell cellDiag;
         Cell cellSide;
         if (chooseLeft()) {
-            cellDiag = leftBelow(cell);
-            cellSide = toLeft(cell);
+            cellDiag = gu.leftBelow(cell);
+            cellSide = gu.left(cell);
         } else {
-            cellDiag = rightBelow(cell);
-            cellSide = toRight(cell);
+            cellDiag = gu.rightBelow(cell);
+            cellSide = gu.right(cell);
         }
 
         if (cellDiag != null && at(cellSide).isDisplaceable()) {
@@ -113,7 +116,7 @@ public class Grid {
     }
 
     void processWater(WaterParticle wp, Cell cell) {
-        Cell cellUnder = below(cell);
+        Cell cellUnder = gu.below(cell);
         if (cellUnder != null) {
             Particle p2 = at(cellUnder);
             if (p2.isEmpty()) {
@@ -125,9 +128,9 @@ public class Grid {
         // if we get to here, we didn't swap with underneath: try left/right
         Cell cellSide;
         if (chooseLeft()) {
-            cellSide = toLeft(cell);
+            cellSide = gu.left(cell);
         } else {
-            cellSide = toRight(cell);
+            cellSide = gu.right(cell);
         }
 
         if (cellSide != null) {
@@ -226,12 +229,12 @@ public class Grid {
     // utility  functions
 
     Particle make(Particle.Type type) {
-        return ParticleFactory.createParticle(type);
+        return createParticle(type);
     }
 
     // Returns a new particle of the same type as p.
     Particle duplicate(Particle p) {
-        return ParticleFactory.createParticle(p.type());
+        return createParticle(p.type());
     }
 
     boolean probability(double prob) {
@@ -251,54 +254,28 @@ public class Grid {
         int dx = 0;
         int dy = 0;
         switch (random.nextInt(4)) {
-            case 0: dx += 1; break;
-            case 1: dx -= 1; break;
-            case 2: dy += 1; break;
-            case 3: dy -= 1; break;
+            case 0:
+                dx += 1;
+                break;
+            case 1:
+                dx -= 1;
+                break;
+            case 2:
+                dy += 1;
+                break;
+            case 3:
+                dy -= 1;
+                break;
         }
         Cell adj = new Cell(cell.row() + dy, cell.col() + dx);
         return validCell(adj) ? adj : null;
     }
 
-    void swap(Cell cell1, Cell cell2) {
-        Particle p1 = at(cell1);
-        Particle p2 = at(cell2);
-        set(cell1, p2);
-        set(cell2, p1);
+    void swap(Cell c1, Cell c2) {
+        Particle p1 = at(c1);
+        Particle p2 = at(c2);
+        set(c1, p2);
+        set(c2, p1);
     }
 
-    Cell below(Cell cell) {
-        if (cell.row() < numRows - 1) {
-            return new Cell(cell.row() + 1, cell.col());
-        }
-        return null;
-    }
-
-    Cell leftBelow(Cell cell) {
-        if (cell.row() < numRows - 1 && cell.col() > 0) {
-            return new Cell(cell.row() + 1, cell.col() - 1);
-        }
-        return null;
-    }
-
-    Cell rightBelow(Cell cell) {
-        if (cell.row() < numRows - 1 && cell.col() < numCols - 1) {
-            return new Cell(cell.row() + 1, cell.col() + 1);
-        }
-        return null;
-    }
-
-    Cell toLeft(Cell cell) {
-        if (cell.col() > 0) {
-            return new Cell(cell.row(), cell.col() - 1);
-        }
-        return null;
-    }
-
-    Cell toRight(Cell cell) {
-        if (cell.col() < numCols - 1) {
-            return new Cell(cell.row(), cell.col() + 1);
-        }
-        return null;
-    }
 }
