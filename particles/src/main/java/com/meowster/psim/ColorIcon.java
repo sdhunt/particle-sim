@@ -5,12 +5,12 @@ import java.awt.*;
 
 public class ColorIcon implements Icon {
 
-    static final int DEFAULT_SIZE = 16;
-    static final int DEFAULT_BORDER = 1;
+    private static final int DEFAULT_SIZE = 16;
+    private static final int DEFAULT_BORDER = 1;
 
-    private Color myColor;
-    private int mySize;
-    private int myBorder;
+    private final Color myColor;
+    private final int mySize;
+    private final int myBorder;
 
     ColorIcon(Color color) {
         this(color, DEFAULT_SIZE, DEFAULT_BORDER);
@@ -22,6 +22,7 @@ public class ColorIcon implements Icon {
         myBorder = border;
     }
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
         g.setColor(Color.black);
         g.fillRect(x, y, mySize, mySize);
@@ -30,10 +31,12 @@ public class ColorIcon implements Icon {
                 mySize - 2 * myBorder, mySize - 2 * myBorder);
     }
 
+    @Override
     public int getIconWidth() {
         return mySize;
     }
 
+    @Override
     public int getIconHeight() {
         return mySize;
     }

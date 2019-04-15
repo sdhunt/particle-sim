@@ -2,26 +2,26 @@ package com.meowster.psim;
 
 import java.awt.*;
 
-public class EmptyParticle extends AbstractParticle {
+public class WaterParticle extends AbstractParticle {
 
     @Override
     public Type type() {
-        return Particle.Type.EMPTY;
+        return Type.WATER;
     }
 
     @Override
     public Color color() {
-        return Parameters.EMPTY_COLOR;
+        return Parameters.WATER_COLOR;
     }
 
     @Override
     public String name() {
-        return "Empty";
+        return "Water";
     }
 
     @Override
-    public boolean isEmpty() {
-        return true;
+    public double activeness() {
+        return 0.9;
     }
 
     @Override
@@ -30,4 +30,3 @@ public class EmptyParticle extends AbstractParticle {
     }
 
 }
-

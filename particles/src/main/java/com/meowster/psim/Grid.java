@@ -1,14 +1,14 @@
 package com.meowster.psim;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Grid {
-    int numRows;
-    int numCols;
-    Particle[][] gridContents;
-    ArrayList<Particle> availableParticles;
-    Random random = new Random();
+    private final int numRows;
+    private final int numCols;
+    private final Particle[][] gridContents;
+    private final List<Particle> availableParticles;
+    private final Random random = new Random();
 
     Grid(int numRows, int numCols) {
         this.numRows = numRows;
@@ -27,20 +27,20 @@ public class Grid {
         }
     }
 
-    Particle at(RowCol cell) {
-        return at(cell.row, cell.col);
+    Particle at(Cell cell) {
+        return at(cell.row(), cell.col());
     }
 
     Particle at(int row, int col) {
         return gridContents[row][col];
     }
 
-    void set(RowCol cell, Particle p) {
-        gridContents[cell.row][cell.col] = p;
+    void set(Cell cell, Particle p) {
+        gridContents[cell.row()][cell.col()] = p;
     }
 
 
-    void applyTool(Particle.Type tool, RowCol cell) {
+    void applyTool(Particle.Type tool, Cell cell) {
         Particle current = at(cell);
         if (current.type() != tool) {
             Particle p = ParticleFactory.createParticle(tool);
@@ -50,7 +50,7 @@ public class Grid {
 
     // == particle processing
     void processRandomParticle() {
-        RowCol cell = pickRandomCell();
+        Cell cell = pickRandomCell();
         Particle p = at(cell);
 
         if (probability(p.activeness())) {
@@ -59,44 +59,22 @@ public class Grid {
         }
     }
 
-    RowCol pickRandomCell() {
+    Cell pickRandomCell() {
         int row = random.nextInt(numRows);
         int col = random.nextInt(numCols);
-        return new RowCol(row, col);
+        return new Cell(row, col);
     }
 
-    void doYourThing(Particle p, RowCol cell) {
+    void doYourThing(Particle p, Cell cell) {
         switch (p.type()) {
             case SAND:
 //            case ASH:
                 processSandOrAsh(p, cell);
                 break;
 
-/*
             case WATER:
                 processWater((WaterParticle) p, cell);
                 break;
-
-            case PLANT:
-                processPlant((PlantParticle) p, cell);
-                break;
-
-            case FIRE:
-                processFire((FireParticle) p, cell);
-                break;
-
-            case WOOD:
-                processWood((WoodParticle) p, cell);
-                break;
-
-            case VAC:
-                processVac((VacParticle) p, cell);
-                break;
-
-            case FAIRY:
-                processFairy((FairyParticle) p, cell);
-                break;
-*/
 
             default:
                 // ignore other particle types
@@ -104,8 +82,8 @@ public class Grid {
         }
     }
 
-    void processSandOrAsh(Particle p, RowCol cell) {
-        RowCol cellUnder = below(cell);
+    void processSandOrAsh(Particle p, Cell cell) {
+        Cell cellUnder = below(cell);
         if (cellUnder != null) {
             Particle p2 = at(cellUnder);
             if (p2.isDisplaceable()) {
@@ -115,8 +93,8 @@ public class Grid {
         }
 
         // didn't go directly under - check for diag-left/right
-        RowCol cellDiag;
-        RowCol cellSide;
+        Cell cellDiag;
+        Cell cellSide;
         if (chooseLeft()) {
             cellDiag = leftBelow(cell);
             cellSide = toLeft(cell);
@@ -134,9 +112,8 @@ public class Grid {
 
     }
 
-/*
-    void processWater(WaterParticle wp, RowCol cell) {
-        RowCol cellUnder = below(cell);
+    void processWater(WaterParticle wp, Cell cell) {
+        Cell cellUnder = below(cell);
         if (cellUnder != null) {
             Particle p2 = at(cellUnder);
             if (p2.isEmpty()) {
@@ -146,7 +123,7 @@ public class Grid {
         }
 
         // if we get to here, we didn't swap with underneath: try left/right
-        RowCol cellSide;
+        Cell cellSide;
         if (chooseLeft()) {
             cellSide = toLeft(cell);
         } else {
@@ -160,11 +137,10 @@ public class Grid {
             }
         }
     }
-*/
 
 /*
-    void processPlant(PlantParticle pp, RowCol cell) {
-        RowCol adj = selectAdjacent(cell);
+    void processPlant(PlantParticle pp, Cell cell) {
+        Cell adj = selectAdjacent(cell);
         if (adj != null) {
             Particle p = at(adj);
             // plant will propagate through water
@@ -177,13 +153,13 @@ public class Grid {
 */
 
 /*
-    void processFire(FireParticle fp, RowCol cell) {
+    void processFire(FireParticle fp, Cell cell) {
         if (fp.hasExpired()) {
             set(cell, make(Particle.Type.EMPTY));
             return;
         }
 
-        RowCol adj = selectAdjacent(cell);
+        Cell adj = selectAdjacent(cell);
         if (adj != null) {
             Particle p = at(adj);
             // fire will burn combustibles
@@ -198,7 +174,7 @@ public class Grid {
 */
 
 /*
-    void processWood(WoodParticle wp, RowCol cell) {
+    void processWood(WoodParticle wp, Cell cell) {
         if (wp.hasExpired()) {
             set(cell, make(Particle.Type.ASH));
             return;
@@ -209,7 +185,7 @@ public class Grid {
         }
         wp.burnTick();
 
-        RowCol adj = selectAdjacent(cell);
+        Cell adj = selectAdjacent(cell);
         if (adj != null) {
             Particle p = at(adj);
             // burning wood will ignite adjacent wood
@@ -223,8 +199,8 @@ public class Grid {
 */
 
 /*
-    void processVac(VacParticle vp, RowCol cell) {
-        RowCol adj = selectAdjacent(cell);
+    void processVac(VacParticle vp, Cell cell) {
+        Cell adj = selectAdjacent(cell);
         if (adj != null) {
             Particle p = at(adj);
             if (p.type() == Particle.Type.ASH) {
@@ -235,8 +211,8 @@ public class Grid {
 */
 
 /*
-    void processFairy(FairyParticle fp, RowCol cell) {
-        RowCol adj = selectAdjacent(cell);
+    void processFairy(FairyParticle fp, Cell cell) {
+        Cell adj = selectAdjacent(cell);
         if (adj != null) {
             Particle p = at(adj);
             if (p.isEmpty()) {
@@ -266,12 +242,12 @@ public class Grid {
         return random.nextInt(2) == 0;
     }
 
-    boolean validRowCol(RowCol rc) {
-        return rc.row >= 0 && rc.row < numRows &&
-                rc.col >= 0 && rc.col < numCols;
+    boolean validCell(Cell c) {
+        return c.row() >= 0 && c.row() < numRows &&
+                c.col() >= 0 && c.col() < numCols;
     }
 
-    RowCol selectAdjacent(RowCol cell) {
+    Cell selectAdjacent(Cell cell) {
         int dx = 0;
         int dy = 0;
         switch (random.nextInt(4)) {
@@ -280,48 +256,48 @@ public class Grid {
             case 2: dy += 1; break;
             case 3: dy -= 1; break;
         }
-        RowCol adj = new RowCol(cell.row + dy, cell.col + dx);
-        return validRowCol(adj) ? adj : null;
+        Cell adj = new Cell(cell.row() + dy, cell.col() + dx);
+        return validCell(adj) ? adj : null;
     }
 
-    void swap(RowCol cell1, RowCol cell2) {
+    void swap(Cell cell1, Cell cell2) {
         Particle p1 = at(cell1);
         Particle p2 = at(cell2);
         set(cell1, p2);
         set(cell2, p1);
     }
 
-    RowCol below(RowCol cell) {
-        if (cell.row < numRows - 1) {
-            return new RowCol(cell.row + 1, cell.col);
+    Cell below(Cell cell) {
+        if (cell.row() < numRows - 1) {
+            return new Cell(cell.row() + 1, cell.col());
         }
         return null;
     }
 
-    RowCol leftBelow(RowCol cell) {
-        if (cell.row < numRows - 1 && cell.col > 0) {
-            return new RowCol(cell.row + 1, cell.col - 1);
+    Cell leftBelow(Cell cell) {
+        if (cell.row() < numRows - 1 && cell.col() > 0) {
+            return new Cell(cell.row() + 1, cell.col() - 1);
         }
         return null;
     }
 
-    RowCol rightBelow(RowCol cell) {
-        if (cell.row < numRows - 1 && cell.col < numCols - 1) {
-            return new RowCol(cell.row + 1, cell.col + 1);
+    Cell rightBelow(Cell cell) {
+        if (cell.row() < numRows - 1 && cell.col() < numCols - 1) {
+            return new Cell(cell.row() + 1, cell.col() + 1);
         }
         return null;
     }
 
-    RowCol toLeft(RowCol cell) {
-        if (cell.col > 0) {
-            return new RowCol(cell.row, cell.col - 1);
+    Cell toLeft(Cell cell) {
+        if (cell.col() > 0) {
+            return new Cell(cell.row(), cell.col() - 1);
         }
         return null;
     }
 
-    RowCol toRight(RowCol cell) {
-        if (cell.col < numCols - 1) {
-            return new RowCol(cell.row, cell.col + 1);
+    Cell toRight(Cell cell) {
+        if (cell.col() < numCols - 1) {
+            return new Cell(cell.row(), cell.col() + 1);
         }
         return null;
     }

@@ -25,6 +25,7 @@ public abstract class ColorAgingParticle extends AbstractParticle {
         return colorIndex == nColors - 1;
     }
 
+    @Override
     public Color color() {
         if (!ageMax()) {
             age += 1;

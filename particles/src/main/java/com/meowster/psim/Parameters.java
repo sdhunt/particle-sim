@@ -22,7 +22,7 @@ public class Parameters {
     static final int GRID_COLS = 100;
     static final int GRID_CELL_SIZE = 10;
 
-    static final int STEPS_PER_LOOP = 40000;
+    static final int STEPS_PER_LOOP = 20000;
     static final long MAIN_LOOP_PAUSE_MS = 10;
 
 }

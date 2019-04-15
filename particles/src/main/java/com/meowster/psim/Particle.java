@@ -4,7 +4,7 @@ import java.awt.*;
 
 public interface Particle {
     enum Type {
-        EMPTY, METAL, SAND, ASH, // WATER, PLANT, FIRE, WOOD, ASH, VAC, FAIRY
+        EMPTY, METAL, SAND, WATER, // PLANT, FIRE, WOOD, ASH, VAC, FAIRY
     }
 
     /**
@@ -23,12 +23,34 @@ public interface Particle {
     String name();
 
     /**
+     * Returns a value between 0.0 and 1.0, representing how "active" these
+     * particles are. 0.0 means no activity; 0.5 means active 50% of the time;
+     * 1.0 means active all the time.
+     */
+    double activeness();
+
+    /**
+     * Invoked when the particle is selected and needs to do something.
+     */
+    void tick();
+
+    /**
+     * May be invoked when a source of heat (fire, lava, etc.) is adjacent.
+     */
+    void ignite();
+
+    /**
      * Returns true if this particle is an EMPTY particle.
      */
     boolean isEmpty();
 
     /**
-     * Returns true if this particle is displaceable by sand.
+     * Returns true if this particle can be replaced by the particle tool.
+     */
+    boolean isReplaceable();
+
+    /**
+     * Returns true if this particle is displaceable (by sand, etc.)
      */
     boolean isDisplaceable();
 
@@ -41,17 +63,4 @@ public interface Particle {
      * Returns true if this particle has reached the end of its life.
      */
     boolean hasExpired();
-
-    /**
-     * Returns a value between 0.0 and 1.0, representing how "active" these
-     * particles are. 0.0 means no activity; 0.5 means active 50% of the time;
-     * 1.0 means active all the time.
-     */
-    double activeness();
-
-    /**
-     * Invoked when fire particle is adjacent.
-     */
-    void ignite();
-
 }

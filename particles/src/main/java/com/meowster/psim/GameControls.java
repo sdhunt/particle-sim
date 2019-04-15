@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.List;
 
 public class GameControls extends JPanel {
     static final int CTRL_W = 200;
@@ -19,12 +19,13 @@ public class GameControls extends JPanel {
     static final int LABEL_W = 100;
     static final int LABEL_H = 100;
     static final Dimension LABEL_DIM = new Dimension(LABEL_W, LABEL_H);
+
     static final int LABEL_SIZE = BTN_W;
     static final int LABEL_BORDER = 3;
 
     static final Font BTN_FONT = new Font("Monospaced", Font.PLAIN, 14);
 
-    ArrayList<Particle> availableParticles;
+    List<Particle> availableParticles;
     ButtonListener btnListener = new ButtonListener();
     GameCanvas canvas;
     JLabel toolLabel;

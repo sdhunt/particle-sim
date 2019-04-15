@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.List;
 
 public class GameCanvas extends JPanel {
     static final Color BG_COLOR = Parameters.CANVAS_BG_COLOR;
@@ -22,7 +23,7 @@ public class GameCanvas extends JPanel {
     MouseHandler mouseHandler = new MouseHandler();
 
     // where the mouse is (if not null)
-    RowCol mouseCell = null;
+    Cell mouseCell = null;
 
     // what we are currently drawing with the mouse
     Particle.Type tool = Particle.Type.EMPTY;
@@ -41,7 +42,7 @@ public class GameCanvas extends JPanel {
         executor.execute(new MainLoop());
     }
 
-    ArrayList<Particle> availableParticles() {
+    List<Particle> availableParticles() {
         return ParticleFactory.createParticleList();
     }
 
@@ -84,17 +85,17 @@ public class GameCanvas extends JPanel {
      * @param e the mouse event
      * @return the location, or null
      */
-    private RowCol toRowCol(MouseEvent e) {
+    private Cell toRowCol(MouseEvent e) {
         int row = e.getY() / CELL_SIZE;
         int col = e.getX() / CELL_SIZE;
         if (row < 0 || row >= ROWS ||
                 col < 0 || col >= COLS) {
             return null;
         }
-        return new RowCol(row, col);
+        return new Cell(row, col);
     }
 
-    void mouseCellEvent(RowCol where) {
+    void mouseCellEvent(Cell where) {
         mouseCell = where;
         if (where != null) {
             grid.applyTool(tool, where);

@@ -4,9 +4,9 @@ import java.awt.*;
 
 public class ColorScale {
 
-    static final int DEFAULT_GRADATIONS = 5;
+    private static final int DEFAULT_GRADATIONS = 5;
 
-    Color scale[];
+    private Color scale[];
 
     ColorScale(Color c0, Color c1) {
         this(c0, c1, DEFAULT_GRADATIONS);

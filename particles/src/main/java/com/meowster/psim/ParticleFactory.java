@@ -1,24 +1,19 @@
 package com.meowster.psim;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ParticleFactory {
-    static ArrayList<Particle> createParticleList() {
-        ArrayList<Particle> list = new ArrayList<>();
+    public static List<Particle> createParticleList() {
+        List<Particle> list = new ArrayList<>();
         list.add(new EmptyParticle());
         list.add(new MetalParticle());
         list.add(new SandParticle());
-//        list.add(new WaterParticle());
-//        list.add(new PlantParticle());
-//        list.add(new FireParticle());
-//        list.add(new WoodParticle());
-//        list.add(new VacParticle());
-//        list.add(new FairyParticle());
-        // NOTE: don't add ASH
+        list.add(new WaterParticle());
         return list;
     }
 
-    static Particle createParticle(Particle.Type type) {
+    public static Particle createParticle(Particle.Type type) {
         switch (type) {
             case EMPTY:
                 return new EmptyParticle();
@@ -26,20 +21,8 @@ public class ParticleFactory {
                 return new MetalParticle();
             case SAND:
                 return new SandParticle();
-//            case WATER:
-//                return new WaterParticle();
-//            case PLANT:
-//                return new PlantParticle();
-//            case FIRE:
-//                return new FireParticle();
-//            case WOOD:
-//                return new WoodParticle();
-//            case ASH:
-//                return new AshParticle();
-//            case VAC:
-//                return new VacParticle();
-//            case FAIRY:
-//                return new FairyParticle();
+            case WATER:
+                return new WaterParticle();
             default:
                 return null;
         }
