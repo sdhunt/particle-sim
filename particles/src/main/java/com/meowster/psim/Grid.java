@@ -3,43 +3,30 @@ package com.meowster.psim;
 import java.util.Random;
 
 import static com.meowster.psim.ParticleFactory.createParticle;
+import static com.meowster.psim.ParticleFactory.duplicateParticle;
 
 class Grid {
-    private final int numRows;
-    private final int numCols;
+    private final int rows;
+    private final int cols;
     private final Particle[][] gridContents;
     private final Random random = new Random();
     private final GridUtils gu;
 
-    Grid(int numRows, int numCols) {
-        this.numRows = numRows;
-        this.numCols = numCols;
-        gu = new GridUtils(numRows, numCols);
-        gridContents = new Particle[numRows][numCols];
+    Grid(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        gu = new GridUtils(rows, cols);
+        gridContents = new Particle[rows][cols];
         fillGridWithEmpty();
     }
 
-
     void fillGridWithEmpty() {
-        for (int row = 0; row < numRows; row++) {
-            for (int col = 0; col < numCols; col++) {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
                 gridContents[row][col] = new EmptyParticle();
             }
         }
     }
-
-    private Particle at(Cell cell) {
-        return at(cell.row(), cell.col());
-    }
-
-    Particle at(int row, int col) {
-        return gridContents[row][col];
-    }
-
-    private void set(Cell cell, Particle p) {
-        gridContents[cell.row()][cell.col()] = p;
-    }
-
 
     void applyTool(Particle.Type tool, Cell cell) {
         Particle current = at(cell);
@@ -51,22 +38,35 @@ class Grid {
         }
     }
 
+    Particle at(int row, int col) {
+        return gridContents[row][col];
+    }
+
+    private Particle at(Cell cell) {
+        return at(cell.row(), cell.col());
+    }
+
+    private void set(Cell cell, Particle p) {
+        gridContents[cell.row()][cell.col()] = p;
+    }
+
+    private void swap(Cell c1, Cell c2) {
+        Particle p1 = at(c1);
+        Particle p2 = at(c2);
+        set(c1, p2);
+        set(c2, p1);
+    }
+
     // == particle processing
     void processRandomParticle() {
-        Cell cell = pickRandomCell();
+        Cell cell = gu.selectRandomCell();
         Particle p = at(cell);
-
-        if (probability(p.activeness())) {
+        if (gu.probability(p.activeness())) {
             // this particle is active and should "do its thing!"
             doYourThing(p, cell);
         }
     }
 
-    private Cell pickRandomCell() {
-        int row = random.nextInt(numRows);
-        int col = random.nextInt(numCols);
-        return new Cell(row, col);
-    }
 
     private void doYourThing(Particle p, Cell cell) {
         p.tick();
@@ -90,20 +90,39 @@ class Grid {
         }
     }
 
-    private void processSandOrAsh(Particle p, Cell cell) {
+    private boolean displaceDownwards(Particle p, Cell cell) {
         Cell cellUnder = gu.below(cell);
         if (cellUnder != null) {
             Particle p2 = at(cellUnder);
             if (p2.isDisplaceable()) {
                 swap(cell, cellUnder);
-                return;
+                return true;
             }
+        }
+        return false;
+    }
+
+    private boolean emptyDownwards(Particle p, Cell cell) {
+        Cell cellUnder = gu.below(cell);
+        if (cellUnder != null) {
+            Particle p2 = at(cellUnder);
+            if (p2.isEmpty()) {
+                swap(cell, cellUnder);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void processSandOrAsh(Particle p, Cell cell) {
+        if (displaceDownwards(p, cell)) {
+            return;
         }
 
         // didn't go directly under - check for diag-left/right
         Cell cellDiag;
         Cell cellSide;
-        if (chooseLeft()) {
+        if (gu.coinToss()) {
             cellDiag = gu.leftBelow(cell);
             cellSide = gu.left(cell);
         } else {
@@ -111,48 +130,32 @@ class Grid {
             cellSide = gu.right(cell);
         }
 
-        if (cellDiag != null && at(cellSide).isDisplaceable()) {
-            Particle p2 = at(cellDiag);
-            if (p2.isDisplaceable()) {
+        if (cellSide != null && cellDiag != null) {
+            if (at(cellSide).isDisplaceable() && at(cellDiag).isDisplaceable()) {
                 swap(cell, cellDiag);
             }
         }
-
     }
 
     private void processWater(Particle p, Cell cell) {
-        Cell cellUnder = gu.below(cell);
-        if (cellUnder != null) {
-            Particle p2 = at(cellUnder);
-            if (p2.isEmpty()) {
-                swap(cell, cellUnder);
-                return;
-            }
+        if (emptyDownwards(p, cell)) {
+            return;
         }
 
-        // if we get to here, we didn't swap with underneath: try left/right
-        Cell cellSide;
-        if (chooseLeft()) {
-            cellSide = gu.left(cell);
-        } else {
-            cellSide = gu.right(cell);
-        }
+        // didn't swap with underneath: try left/right
+        Cell cellSide = gu.coinToss() ? gu.left(cell) : gu.right(cell);
 
-        if (cellSide != null) {
-            Particle p2 = at(cellSide);
-            if (p2.isEmpty()) {
-                swap(cell, cellSide);
-            }
+        if (cellSide != null && at(cellSide).isEmpty()) {
+            swap(cell, cellSide);
         }
     }
 
     private void processPlant(Particle p, Cell cell) {
-        Cell adj = selectAdjacent(cell);
+        Cell adj = gu.selectAdjacent(cell);
         if (adj != null) {
-            Particle padj = at(adj);
             // plant will propagate through water
-            if (padj.type() == Particle.Type.WATER) {
-                set(adj, duplicate(p));
+            if (at(adj).type() == Particle.Type.WATER) {
+                set(adj, duplicateParticle(p));
             }
         }
     }
@@ -226,58 +229,4 @@ class Grid {
         }
     }
 */
-
-    //---------------------
-    // utility  functions
-
-    Particle make(Particle.Type type) {
-        return createParticle(type);
-    }
-
-    // Returns a new particle of the same type as p.
-    Particle duplicate(Particle p) {
-        return createParticle(p.type());
-    }
-
-    private boolean probability(double prob) {
-        return random.nextDouble() < prob;
-    }
-
-    private boolean chooseLeft() {
-        return random.nextInt(2) == 0;
-    }
-
-    private boolean validCell(Cell c) {
-        return c.row() >= 0 && c.row() < numRows &&
-                c.col() >= 0 && c.col() < numCols;
-    }
-
-    Cell selectAdjacent(Cell cell) {
-        int dx = 0;
-        int dy = 0;
-        switch (random.nextInt(4)) {
-            case 0:
-                dx += 1;
-                break;
-            case 1:
-                dx -= 1;
-                break;
-            case 2:
-                dy += 1;
-                break;
-            case 3:
-                dy -= 1;
-                break;
-        }
-        Cell adj = new Cell(cell.row() + dy, cell.col() + dx);
-        return validCell(adj) ? adj : null;
-    }
-
-    private void swap(Cell c1, Cell c2) {
-        Particle p1 = at(c1);
-        Particle p2 = at(c2);
-        set(c1, p2);
-        set(c2, p1);
-    }
-
 }

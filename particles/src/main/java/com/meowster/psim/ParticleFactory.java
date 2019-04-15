@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ParticleFactory {
+    /**
+     * Returns a list of particles that the user may "paint"
+     * with as "tools".
+     */
     static List<Particle> createParticleList() {
         List<Particle> list = new ArrayList<>();
         list.add(new EmptyParticle());
@@ -14,6 +18,9 @@ class ParticleFactory {
         return list;
     }
 
+    /**
+     * Creates and returns a particle of the specified type.
+     */
     static Particle createParticle(Particle.Type type) {
         switch (type) {
             case EMPTY:
@@ -29,5 +36,12 @@ class ParticleFactory {
             default:
                 return null;
         }
+    }
+
+    /**
+     * Returns a new particle of the same type as p.
+     */
+    static Particle duplicateParticle(Particle p) {
+        return createParticle(p.type());
     }
 }
