@@ -5,6 +5,8 @@ import static com.meowster.psim.ParticleFactory.duplicateParticle;
 
 class Grid {
     private static final double FIRE_SPREAD_PROB = 0.02;
+    private static final double ADJ_IGNITE_PROB = 0.5;
+    private static final double OIL_WATER_SWAP = 0.4;
 
     private final int rows;
     private final int cols;
@@ -91,6 +93,10 @@ class Grid {
 
             case WATER:
                 processWater(p, cell);
+                break;
+
+            case OIL:
+                processOil(p, cell);
                 break;
 
             case PLANT:
@@ -184,10 +190,39 @@ class Grid {
         }
     }
 
+    private boolean swapIf(Cell cell, Cell other, Particle.Type type) {
+        if (other != null && at(other).type() == type) {
+            swap(cell, other);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean swapIfWater(Cell cell, Cell other) {
+        return swapIf(cell, other, Particle.Type.WATER);
+    }
+
+    private boolean swapIfOil(Cell cell, Cell other) {
+        return swapIf(cell, other, Particle.Type.OIL);
+    }
+
+
     private void processWater(Particle p, Cell cell) {
         if (emptyDownwards(p, cell)) {
             return;
         }
+
+        // oil floats on water
+        if (gu.probability(OIL_WATER_SWAP)) {
+            if (swapIfOil(cell, gu.below(cell)) ||
+                    swapIfOil(cell, gu.leftBelow(cell)) ||
+                    swapIfOil(cell, gu.rightBelow(cell)) ||
+                    swapIfOil(cell, gu.left(cell)) ||
+                    swapIfOil(cell, gu.right(cell))) {
+                return;
+            }
+        }
+
 
         // didn't swap with underneath: try left/right
         Cell side = gu.coinToss() ? gu.left(cell) : gu.right(cell);
@@ -195,6 +230,33 @@ class Grid {
         if (side != null && at(side).isEmpty()) {
             swap(cell, side);
         }
+    }
+
+    private void processOil(Particle p, Cell cell) {
+        if (emptyDownwards(p, cell)) {
+            return;
+        }
+
+        // oil floats on water
+        if (gu.probability(OIL_WATER_SWAP)) {
+            if (swapIfWater(cell, gu.above(cell)) ||
+                    swapIfWater(cell, gu.leftAbove(cell)) ||
+                    swapIfWater(cell, gu.rightAbove(cell)) ||
+                    swapIfWater(cell, gu.left(cell)) ||
+                    swapIfWater(cell, gu.right(cell))) {
+                return;
+            }
+        }
+
+        // didn't swap with water - try moving
+        Cell other = gu.coinToss() ? gu.left(cell) : gu.right(cell);
+        if (other != null && at(other).isEmpty()) {
+            swap(cell, other);
+        } else {
+            other = cell;
+        }
+
+        processBurnable((BurnableParticle) p, other, Particle.Type.FIRE);
     }
 
     private void processPlant(Particle p, Cell cell) {
@@ -224,25 +286,31 @@ class Grid {
         }
     }
 
+
     private void processWood(Particle p, Cell cell) {
-        WoodParticle wp = (WoodParticle) p;
-        if (wp.hasExpired()) {
-            set(cell, createParticle(Particle.Type.ASH));
+        processBurnable((BurnableParticle) p, cell, Particle.Type.ASH);
+    }
+
+    private void processBurnable(BurnableParticle bp, Cell cell, Particle.Type repl) {
+        if (bp.hasExpired()) {
+            set(cell, createParticle(repl));
             return;
         }
-        if (!wp.isBurning()) {
+        if (!bp.isBurning()) {
             return;
         }
 
-        wp.burnTick();
+        bp.burnTick();
         Cell adj = gu.selectAdjacent(cell);
         if (adj != null) {
             Particle p2 = at(adj);
-            // burning wood will ignite adjacent wood
-            if (gu.sameType(p, p2)) {
-                p2.ignite();
-            } else {
-                maybeSetFireTo(p2, adj);
+            // burning particle will ignite adjacent
+            if (gu.probability(ADJ_IGNITE_PROB)) {
+                if (gu.sameType(bp, p2)) {
+                    p2.ignite();
+                } else {
+                    maybeSetFireTo(p2, adj);
+                }
             }
         }
     }
@@ -250,6 +318,8 @@ class Grid {
     private void maybeSetFireTo(Particle p, Cell cell) {
         if (p.isCombustible() && gu.probability(FIRE_SPREAD_PROB)) {
             set(cell, createParticle(Particle.Type.FIRE));
+        } else if (p instanceof BurnableParticle) {
+            p.ignite();
         }
     }
 

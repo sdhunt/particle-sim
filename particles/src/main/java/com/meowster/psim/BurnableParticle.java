@@ -11,10 +11,21 @@ public abstract class BurnableParticle extends ColoredParticle {
     private boolean burning = false;
     private boolean burntOut = false;
     private Clock burnClock = null;
+    private ColorScale burningColorScale;
 
     BurnableParticle(Color c1, Color c0, int nColors, int burnDuration) {
         super(c1, c0, nColors, 1);
         this.burnDuration = burnDuration;
+        burningColors(c1, c0, nColors);
+    }
+
+    void burningColors(Color c1, Color c0, int nColors) {
+        burningColorScale = new ColorScale(c1, c0, nColors);
+    }
+
+    @Override
+    public ColorScale colorScale() {
+        return isBurning() ? burningColorScale : super.colorScale();
     }
 
     @Override

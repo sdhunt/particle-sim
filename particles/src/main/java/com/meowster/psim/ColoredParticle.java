@@ -32,8 +32,13 @@ abstract class ColoredParticle extends AbstractParticle {
         currentColor = colorScale.get(i);
     }
 
+    // allow subclasses to switch color scales if they wish
+    public ColorScale colorScale() {
+        return colorScale;
+    }
+
     private Color nextColor() {
-        return colorScale.get(pdistrib.nextIndex());
+        return colorScale().get(pdistrib.nextIndex());
     }
 
     @Override

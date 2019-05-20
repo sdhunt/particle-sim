@@ -28,7 +28,7 @@ public class WoodParticle extends BurnableParticle {
 
     @Override
     public double activeness() {
-        return 0.2;
+        return 0.4;
     }
 
     @Override

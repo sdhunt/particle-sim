@@ -19,6 +19,7 @@ class ParticleFactory {
 //        list.add(new GrassParticle());
         list.add(new SandParticle());
         list.add(new WaterParticle());
+        list.add(new OilParticle());
         list.add(new PlantParticle());
         list.add(new FireParticle());
         return list;
@@ -47,6 +48,8 @@ class ParticleFactory {
                 return new SandParticle();
             case WATER:
                 return new WaterParticle();
+            case OIL:
+                return new OilParticle();
             case PLANT:
                 return new PlantParticle();
             case FIRE:
