@@ -1,12 +1,15 @@
 package com.meowster.psim;
 
+import java.util.List;
+
 import static com.meowster.psim.ParticleFactory.createParticle;
 import static com.meowster.psim.ParticleFactory.duplicateParticle;
 
 class Grid {
     private static final double FIRE_SPREAD_PROB = 0.02;
     private static final double ADJ_IGNITE_PROB = 0.5;
-    private static final double OIL_WATER_SWAP = 0.4;
+    private static final double OIL_WATER_SWAP_PROB = 0.4;
+    private static final double FIRE_RISE_PROB = 0.25;
 
     private final int rows;
     private final int cols;
@@ -198,6 +201,10 @@ class Grid {
         return false;
     }
 
+    private boolean swapIfAir(Cell cell, Cell other) {
+        return swapIf(cell, other, Particle.Type.EMPTY);
+    }
+
     private boolean swapIfWater(Cell cell, Cell other) {
         return swapIf(cell, other, Particle.Type.WATER);
     }
@@ -213,12 +220,12 @@ class Grid {
         }
 
         // oil floats on water
-        if (gu.probability(OIL_WATER_SWAP)) {
+        if (gu.probability(OIL_WATER_SWAP_PROB)) {
             if (swapIfOil(cell, gu.below(cell)) ||
-                    swapIfOil(cell, gu.leftBelow(cell)) ||
-                    swapIfOil(cell, gu.rightBelow(cell)) ||
-                    swapIfOil(cell, gu.left(cell)) ||
-                    swapIfOil(cell, gu.right(cell))) {
+                swapIfOil(cell, gu.leftBelow(cell)) ||
+                swapIfOil(cell, gu.rightBelow(cell)) ||
+                swapIfOil(cell, gu.left(cell)) ||
+                swapIfOil(cell, gu.right(cell))) {
                 return;
             }
         }
@@ -238,12 +245,12 @@ class Grid {
         }
 
         // oil floats on water
-        if (gu.probability(OIL_WATER_SWAP)) {
+        if (gu.probability(OIL_WATER_SWAP_PROB)) {
             if (swapIfWater(cell, gu.above(cell)) ||
-                    swapIfWater(cell, gu.leftAbove(cell)) ||
-                    swapIfWater(cell, gu.rightAbove(cell)) ||
-                    swapIfWater(cell, gu.left(cell)) ||
-                    swapIfWater(cell, gu.right(cell))) {
+                swapIfWater(cell, gu.leftAbove(cell)) ||
+                swapIfWater(cell, gu.rightAbove(cell)) ||
+                swapIfWater(cell, gu.left(cell)) ||
+                swapIfWater(cell, gu.right(cell))) {
                 return;
             }
         }
@@ -284,11 +291,24 @@ class Grid {
                 at(adj).ignite();
             }
         }
-    }
 
+        if (gu.probability(FIRE_RISE_PROB) &&
+                !anyCombustible(gu.adjacents(cell))) {
+            swapIfAir(cell, gu.above(cell));
+        }
+    }
 
     private void processWood(Particle p, Cell cell) {
         processBurnable((BurnableParticle) p, cell, Particle.Type.ASH);
+    }
+
+    private boolean anyCombustible(List<Cell> adjs) {
+        for (Cell c: adjs) {
+            if (at(c).isCombustible()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void processBurnable(BurnableParticle bp, Cell cell, Particle.Type repl) {

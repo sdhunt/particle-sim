@@ -7,7 +7,7 @@ public class FireParticle extends ColorAgingParticle {
     private static final Color FIRE_EMBER_COLOR = new Color(0.6f, 0.3f, 0.3f);
 
     FireParticle() {
-        super(FIRE_COLOR, FIRE_EMBER_COLOR, 5, 16);
+        super(FIRE_COLOR, FIRE_EMBER_COLOR, 5, 8);
     }
 
     @Override

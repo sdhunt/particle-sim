@@ -1,5 +1,7 @@
 package com.meowster.psim;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 class GridUtils {
@@ -87,5 +89,18 @@ class GridUtils {
 
     boolean sameType(Particle a, Particle b) {
         return a.type() == b.type();
+    }
+
+    List<Cell> adjacents(Cell cell) {
+        Cell u = above(cell);
+        Cell d = below(cell);
+        Cell l = left(cell);
+        Cell r = right(cell);
+        List<Cell> adj = new ArrayList<>();
+        if (u != null) adj.add(u);
+        if (d != null) adj.add(d);
+        if (l != null) adj.add(l);
+        if (r != null) adj.add(r);
+        return adj;
     }
 }
